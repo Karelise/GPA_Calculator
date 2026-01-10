@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPA Calculator</title>
+    <link rel = "styleSheet" type = "text/css" href = "indexSpecifications.css">
+</head>
+
+<body>
+    <nav>TO DO: Add navigation pannel</nav>
+    <header>
+        <h1>GPA Calculator</h1>
+    </header>
+    
+    <h2>Year</h2>
+    <h3>Semester</h3>
+    
+    <section class = "course">
+        <ul>
+            <li><h4>Course Name</h4></li>
+            <li><h5>00.00%</h5></li>
+            <li><h5>Category</h5></li>
+            <li><h6>- L</h6></li>
+        </ul>
+
+
+        <table class = "assignment" id = "t1">
+        <tr>
+            <th class = "tableTitle" colspan="3">Assignment Type</th>
+            <th class = "tableTitle">00%</th>
+            <th class = "percentage">00.00%</th>
+            
+        </tr>
+        <tr>
+            <th>Title</th>
+            <th>Score</th>
+            <th>Max</th>
+            <th>Bonus</th> 
+            <th>Total</th>
+        </tr>
+
+        <tr>
+            <td>#</td>
+            <td>80</td>
+            <td>100</td>
+            <td>10</td>
+            <td>#</td>
+        </tr>
+        <tr>
+            <td>#</td>
+            <td>25</td>
+            <td>30</td>
+            <td>0</td>
+            <td>#</td>
+        </tr>
+    </table>
+    <button class = "edit" id = "e1" onclick= "updateTable('t1','e1')">Edit Table</button><br>
+    <button id="tableButton">+ Add Course Work</button>
+
+    </section>
+
+    <script src = "index.js"></script>
+    
+</body>
+</html>

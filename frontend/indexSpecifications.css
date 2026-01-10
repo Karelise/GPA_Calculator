@@ -1,0 +1,128 @@
+/* Table type "assignment" */
+table.assignment {
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px solid lightgreen;
+    width: 600px;
+}
+
+/* General Table Type "assignment" Elements*/
+.assignment th{
+    background-color: darkslategray;
+    padding: 8px;
+    color: white;
+    font-size: 20px;
+    border: 2px solid white;
+}
+
+.assignment td{
+    background-color: DarkSeaGreen;
+    font-size: 16;
+    height: 25px;
+    color: white;
+    border: 2px solid white;
+}
+
+.assignment tr{
+    text-align: center;
+}
+
+/* Specific Table Elements */
+th.tableTitle{
+    background-color: transparent;
+    color: darkslategray;
+    border-radius: 100px;
+    background-color: lightblue;   
+    border: 5px solid white;
+}
+
+th.percentage{
+    background-color: lightgreen;
+    border-radius: 100px;
+    color: black;
+    border: 5px solid white;
+}
+
+/* Section type "course" */
+section.course{
+    background-color: antiquewhite;
+    border: 20px solid antiquewhite;
+    border-radius: 50px;
+    width:fit-content;
+    margin:auto; /* Centers section*/
+}
+
+/* Section type "course" Elements*/
+.course ul{
+    list-style-type: none;
+    display: flex;            
+}
+
+.course h4{  /* Assignment Type */
+    font-size: 25px;
+    margin: 10px;
+}
+
+.course h5{  /* Grade in percent and Category */
+    font-size: 20px;
+    margin: 10px;
+    background-color: lightblue; 
+    border-radius: 50px;
+    padding:5px;
+}
+.course h6{  /* Grade in Letter */
+    font-size: 20px;
+    margin: 10px;
+    background-color: darkslategray;
+    color:white;
+    padding: 5px;
+    border-radius: 50px;
+}
+
+.course button{  /* Add Course Work Button*/
+    background-color: lightgreen;
+    padding:10px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 50px;
+    margin: 10px;
+    border-color: transparent;   
+}
+.course button:hover{
+    background-color:lightpink;
+}
+
+button.edit{  /* Edit Table / Save Changes Button */
+    background-color: gray;
+    font-size: 15px;
+}
+button.edit:hover{
+    background-color: white;
+    color: lightgreen;
+}
+
+/*Edit-Mode only Elements*/
+
+input.assignmentType, input.weight {
+    border: dashed white 2px;
+    border-radius: 50px;
+    background-color: transparent;
+    font-size: 20px;
+    text-align: center;
+
+}
+
+input.weight{
+    width: 40px;
+}
+
+input.tData, input.tDTitle {
+    border: dashed lightgreen 2px;
+    background-color: transparent;
+    width: 40px;
+    text-align: center;
+}
+
+input.tDTitle{
+    width: 60px;
+}
