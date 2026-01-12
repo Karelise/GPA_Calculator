@@ -43,6 +43,12 @@ th.percentage{
     border: 5px solid white;
 }
 
+td.clear,th.clear{
+    background-color: transparent;
+    border: transparent;
+    padding: 0px;
+}
+
 /* Section type "course" */
 section.course{
     background-color: antiquewhite;
@@ -128,11 +134,21 @@ input.tDTitle{
 }
 
 button.newRow{
-    background-color: transparent;
+    background-color: white;
     font-size: 16px;
-    padding: 0px;
+    color: lightgreen
 }
 button.newRow:hover{
     color:white;
-    background-color: transparent;
+    background-color: lightgreen;
+}
+
+button.delete{
+    background-color: white;
+    border: solid 2px red;
+    color:red;
+    width: 35px;
+    height: 35px;
+    padding: 2px;
+
 }

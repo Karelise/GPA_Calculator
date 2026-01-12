@@ -16,6 +16,7 @@ function getAssesmentTypeGrade(tableID){
         
         // Updates the table's "Total" column
         let total = ((score+bonus)/max)*100;
+        table.rows[i].cells[4].classList.remove("clear");
         table.rows[i].cells[4].innerText=total.toFixed(1) + "%";
 
         accumulatedPoints += score + bonus;
@@ -57,8 +58,17 @@ function updateTable(tableID, buttonID){
 
         t.rows[0].cells[1].innerText = ""; // Clears cell's text
         t.rows[0].cells[1].appendChild(cw_weight); // Inserts input box into cell
+        
+        // Turns "Total" cell into delete table button
+        const deleteTable = document.createElement("button");
+        deleteTable.classList.add("delete");
+        deleteTable.onclick = () => {t.remove(); b.remove()}
+        deleteTable.innerText = "🗑";
+        
+        t.rows[1].cells[4].classList.add("clear");
+        t.rows[1].cells[4].innerText = "";
+        t.rows[1].cells[4].appendChild(deleteTable);
 
-        enableInputTableData(t.rows);
 
         // Adds "Add new row" button
         // Creates the button
@@ -69,9 +79,12 @@ function updateTable(tableID, buttonID){
 
         const newRow = t.insertRow(-1);  // Creates a new row at the end of the table
         const cell1 = newRow.insertCell(0); // Adds 1 cell to the new row
-        cell1.colSpan = 5; // Ensures the row's singular cell spans the entirety of the table
-            
-        cell1.appendChild(newRowButton) // Adds the button into the table
+        cell1.colSpan = 4; // Ensures the row's singular cell spans the entirety of the table
+        cell1.classList.add("clear");
+
+        cell1.appendChild(newRowButton); // Adds the button into the table
+        
+        enableInputTableData(t.rows);
     } else if(b.innerText == "Save Changes"){ // Disables Edit Mode
         b.innerText = "Edit Table";
 
@@ -92,6 +105,9 @@ function updateTable(tableID, buttonID){
                 columns[c].innerText =  cw_c.value;
             }
         } 
+        // Resets "Title" cell
+        t.rows[1].cells[4].classList.remove("clear");
+        t.rows[1].cells[4].innerText = "Total"
 
         // Removes the "Add New Row Button"
         t.deleteRow(-1);
@@ -102,27 +118,42 @@ function updateTable(tableID, buttonID){
 
 // Clears user data cells and adds input boxes
 function enableInputTableData(rows){
-    for(let r = 2; r<rows.length; r++){
+    for(let r = 2; r<rows.length-1; r++){
             let columns = rows[r].cells;
-            for(let c = 0; c<(columns.length)-1;c++){
+            for(let c = 0; c<(columns.length);c++){
                 const inputBox = columns[c].querySelector('input'); // Searches for input boc
                 if(inputBox !==null) break;// Jumps rows if they already have input boxes
 
-                const cw_c = document.createElement("input");
-                if (c==0){ // Creates text input box for "Title" column
-                    cw_c.classList.add("tDTitle")
-                    cw_c.type = "text";
-                    cw_c.value = columns[c].innerText;
-                    cw_c.placeholder = columns[c].innerText;
-                }else{ // Creates number input box for "Score", "Max", and "Bonus" columns
-                    cw_c.classList.add("tData")
-                    cw_c.type = "number";
-                    cw_c.value = Number(columns[c].innerText);
-                    cw_c.placeholder = Number(columns[c].innerText);
-                    cw_c.min = 0;
+                if(c==4){ // Adds delete row button
+                    const deleteRowButton = document.createElement("button");
+                    // deleteRowButton.appendChild(img)
+                    deleteRowButton.classList.add("delete");
+                    deleteRowButton.innerText = "×"
+
+                    const row = rows[r];
+                    columns[c].classList.add("clear");
+                    deleteRowButton.onclick = () => row.remove(); // CHECK
+                    
+                    columns[c].innerText = ""; // Clears cell's text
+                    columns[c].appendChild(deleteRowButton);
+                }else{
+                    const cw_c = document.createElement("input");
+                    if (c==0){ // Creates text input box for "Title" column
+                        cw_c.classList.add("tDTitle")
+                        cw_c.type = "text";
+                        cw_c.value = columns[c].innerText;
+                        cw_c.placeholder = columns[c].innerText;
+                    }else{ // Creates number input box for "Score", "Max", and "Bonus" columns
+                        cw_c.classList.add("tData")
+                        cw_c.type = "number";
+                        cw_c.value = Number(columns[c].innerText);
+                        cw_c.placeholder = Number(columns[c].innerText);
+                        cw_c.min = 0;
+                    }
+                    columns[c].innerText = ""; // Clears cell's text
+                    columns[c].appendChild(cw_c); // Puts input box inside cell
                 }
-                columns[c].innerText = ""; // Clears cell's text
-                columns[c].appendChild(cw_c); // Puts input box inside cell
+                
             }
         }
 }
