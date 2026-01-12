@@ -101,7 +101,7 @@ button.edit:hover{
     color: lightgreen;
 }
 
-/*Edit-Mode only Elements*/
+/* Edit-Mode only Elements */
 
 input.assignmentType, input.weight {
     border: dashed white 2px;
@@ -125,4 +125,14 @@ input.tData, input.tDTitle {
 
 input.tDTitle{
     width: 60px;
+}
+
+button.newRow{
+    background-color: transparent;
+    font-size: 16px;
+    padding: 0px;
+}
+button.newRow:hover{
+    color:white;
+    background-color: transparent;
 }
