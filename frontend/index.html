@@ -16,7 +16,7 @@
     <h2>Year</h2>
     <h3>Semester</h3>
     
-    <section class = "course">
+    <section class = "course" id = "c1">
         <ul>
             <li><h4>Course Name</h4></li>
             <li><h5>00.00%</h5></li>
@@ -24,8 +24,7 @@
             <li><h6>- L</h6></li>
         </ul>
 
-
-        <table class = "assignment" id = "t1">
+        <table class = "assignment" id = "c1t1">
         <tr>
             <th class = "tableTitle" colspan="3">Assignment Type</th>
             <th class = "tableTitle">00%</th>
@@ -55,8 +54,9 @@
             <td>0</td>
         </tr>
     </table>
-    <button class = "edit" id = "e1" onclick= "updateTable('t1','e1')">Edit Table</button><br>
-    <button id="tableButton">+ Add Assignment Type</button>
+
+    <button class = "edit" id = "c1t1_editButton" onclick= "updateTable('c1t1','c1t1_editButton')">Edit Table</button><br>
+    <button id="y1AssignmentButton" onclick="createAssignmentType('c1')">+ Add Assignment Type</button>
 
     </section>
 

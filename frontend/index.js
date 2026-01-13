@@ -1,4 +1,4 @@
-
+// Calculates Assigment type overall grade
 function getAssesmentTypeGrade(tableID){
     let table = document.getElementById(tableID);
     let rows= table.rows;
@@ -102,6 +102,11 @@ function updateTable(tableID, buttonID){
             let columns = rows[r].cells;
             for(let c = 0; c<columns.length-1;c++){
                 cw_c = columns[c].querySelector("input");
+
+                if(c!=0){// Validates user's number input
+                    if(cw_c.value < cw_c.min) cw_c.value = cw_c.min;
+                }
+                
                 columns[c].innerText =  cw_c.value;
             }
         } 
@@ -171,4 +176,80 @@ function createTableRow(table){
     newRow.insertCell(4);
 
     enableInputTableData(rows); // Ensures last row is editable
+}
+
+// Creates a Course Table with its corresponding Edit button
+function createAssignmentType(courseID){
+    const course = document.getElementById(courseID);
+
+    const aT_table = document.createElement("table");
+    aT_table.classList.add("assignment");
+
+    // Finds the assigment's corresponding number
+    const tables = course.querySelectorAll("table"); // Gets a list of all the tables in the given Course
+    const lastTable = tables[tables.length-1]; 
+    
+    let idLastNum = 1; // Default, course has no tables
+    if(lastTable !==undefined && lastTable !== null) idLastNum = Number(lastTable.id.slice(-1))+1;
+
+    aT_table.id = courseID + "a" + idLastNum;
+
+    // Create's the table's headers
+    const tHead = aT_table.createTHead();
+    const h1 = tHead.insertRow();
+    const h2 = tHead.insertRow();
+
+    // Creates & adds h1 cells
+    const a_Name = document.createElement("th");
+    a_Name.colSpan = 3;
+    a_Name.classList.add("tableTitle");
+    a_Name.innerText = "Assignment Type";
+
+    const a_weight = document.createElement("th");
+    a_weight.classList.add("tableTitle");
+    a_weight.innerText = "00%";
+    
+    const a_percentage = document.createElement("th");
+    a_percentage.classList.add("percentage");
+    a_percentage.innerText = "00.0%";
+
+    h1.appendChild(a_Name);
+    h1.appendChild(a_weight);
+    h1.appendChild(a_percentage);
+
+    // Creates & adds h2 cells
+    const a_title = document.createElement("th");
+    a_title.innerText = "Title";
+
+    const a_score = document.createElement("th");
+    a_score.innerText = "Score";
+    
+    const a_max = document.createElement("th");
+    a_max.innerText = "Max";
+
+    const a_bonus = document.createElement("th");
+    a_bonus.innerText = "Bonus";
+
+    const a_total = document.createElement("th");
+    a_total.innerText = "Total";
+
+    h2.appendChild(a_title);
+    h2.appendChild(a_score);
+    h2.appendChild(a_max);
+    h2.appendChild(a_bonus);
+    h2.appendChild(a_total);
+
+    // Creates edit/save button
+    const editButton = document.createElement("button");
+    editButton.classList.add("edit");
+    editButton.id = aT_table.id + "_editButton";
+    editButton.onclick = ()=> updateTable(aT_table.id,editButton.id);
+    editButton.innerText = "Edit Table";
+
+    // Adds table to section
+    course.insertBefore(aT_table, course.lastElementChild);
+    course.insertBefore(editButton, course.lastElementChild)
+    
+    // By default, opens edit mode when an assigment type is created
+    updateTable(aT_table.id, editButton.id);
 }
