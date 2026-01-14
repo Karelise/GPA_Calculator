@@ -1,3 +1,5 @@
+const courseCategories = ["Core", "Professional Elective", "Open Elective", "Humanities", "Social Sciences", "Capstone"]
+
 // Calculates Assigment type overall grade
 function getAssesmentTypeGrade(tableID){
     let table = document.getElementById(tableID);
@@ -39,7 +41,7 @@ function updateTable(tableID, buttonID){
         // Turns Assignment Type text into an input box
         // Creates a text input box
         const cw_name = document.createElement("input");
-        cw_name.classList.add("assignmentType")
+        cw_name.classList.add("assignmentType");
         cw_name.type = "text";
         cw_name.value = t.rows[0].cells[0].innerText;
         cw_name.placeholder = t.rows[0].cells[0].innerText
@@ -252,4 +254,68 @@ function createAssignmentType(courseID){
     
     // By default, opens edit mode when an assigment type is created
     updateTable(aT_table.id, editButton.id);
+}
+
+function updateCourse(ulID){
+    const ul = document.getElementById(ulID);
+    const elements = ul.children;
+
+    const button = elements[4].querySelector("button");
+
+    if(button.innerText.includes("Edit")){
+        button.innerText = "Save";
+
+        // Creates and places Course name input box
+        const courseName = document.createElement("input");
+        courseName.classList.add("assignmentType");
+        courseName.type = "text";
+        courseName.value = elements[0].querySelector("h4").innerText;
+        courseName.placeholder = elements[0].querySelector("h4").innerText;
+
+        elements[0].querySelector("h4").innerText = ""
+        elements[0].appendChild(courseName);
+
+        // Creates a drop down menu for Categories
+        const category = document.createElement("div");
+        category.classList.add("category");
+
+        const selectedOption = document.createElement("span");
+        selectedOption.innerText = elements[2].innerText;
+
+        category.appendChild(selectedOption);
+
+        const categoryOptions = document.createElement("div");
+        categoryOptions.classList.add("categoryOptions");
+
+        for(let i = 0; i < courseCategories.length; i++){
+            const option = document.createElement("a");
+            option.href = "#";
+            option.innerText = courseCategories[i];
+            option.onclick = function (event) {
+                event.preventDefault();
+                selectedOption.innerText = option.innerText;
+            } 
+            categoryOptions.appendChild(option);
+        }    
+        
+        category.appendChild(categoryOptions);
+        elements[2].querySelector("h5").remove();
+        elements[2].appendChild(category);
+
+    }else if(button.innerText.includes("Save")){
+        button.innerText = "✎ Edit";
+
+        // Updates Course name
+        elements[0].querySelector("h4").innerText = elements[0].querySelector("input").value;
+        elements[0].querySelector("input").remove();
+
+        // Updates Category
+        const h5 = document.createElement("h5");
+        const category = elements[2].querySelector("div");
+        const selectedOption = category.querySelector("span");
+
+        h5.innerText = selectedOption.innerText;
+        category.remove();
+        elements[2].appendChild(h5);
+    }
 }

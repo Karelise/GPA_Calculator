@@ -74,7 +74,7 @@ section.course{
     margin: 10px;
     background-color: lightblue; 
     border-radius: 50px;
-    padding:5px;
+    padding:5px 10px;
 }
 .course h6{  /* Grade in Letter */
     font-size: 20px;
@@ -87,16 +87,17 @@ section.course{
 
 .course button{  /* Add Course Work Button*/
     background-color: lightgreen;
-    padding:10px;
-    font-size: 20px;
+    padding:4px 8px;
+    font-size: 18px;
     font-weight: bold;
     border-radius: 50px;
-    margin: 10px auto;
+    margin: 8px auto;
     border-color: transparent;   
     display: block;
 }
 .course button:hover{
     background-color:lightpink;
+    color: white;
 }
 
 button.edit{  /* Edit Table / Save Changes Button */
@@ -145,12 +146,47 @@ button.newRow:hover{
     background-color: lightgreen;
 }
 
-button.delete{
+button.delete, button.courseEdit{
     background-color: white;
     border: solid 2px red;
     color:red;
     width: 35px;
     height: 35px;
     padding: 2px;
+}
 
+
+/* Course Edit Mode Elements */
+button.courseEdit{
+    border: transparent;
+    color: white;
+    background-color: lightgreen;
+}
+div.category{
+    padding: 10px;
+    font-size: 20px;
+    border-radius: 50px;
+    border: dashed darkslategray 2px;
+    background-color: lightblue;
+    
+}
+
+div.category:hover div.categoryOptions{
+    display:block;
+}
+
+div.categoryOptions{
+    display: none;
+    position: absolute;
+    background-color: cadetblue;
+}
+
+div.categoryOptions a{
+    display: block;
+    padding: 5px;
+    color: white;
+    text-decoration: none;
+}
+div.categoryOptions :hover{
+    background-color: darkslategrey;
 }
