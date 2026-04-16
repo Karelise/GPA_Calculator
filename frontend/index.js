@@ -1,8 +1,7 @@
 const courseCategories = ["Core", "Professional Elective", "Open Elective", "Humanities", "Social Sciences", "Capstone"]
 
 // Calculates Assigment type overall grade
-function getAssesmentTypeGrade(tableID){
-    let table = document.getElementById(tableID);
+function getAssesmentTypeGrade(table){
     let rows= table.rows;
 
     let accumulatedPoints = 0;
@@ -16,18 +15,26 @@ function getAssesmentTypeGrade(tableID){
         let bonus = Number(cells[3].innerText);
         let max = Number(cells[2].innerText);
         
-        // Updates the table's "Total" column
-        let total = ((score+bonus)/max)*100;
+        if(cells[1].innerText !== "" && cells[2].innerText !== ""){
+            // Updates the table's "Total" column
+            let total = ((score+bonus)/max)*100;
+            table.rows[i].cells[4].innerText=total.toFixed(1) + "%";
+            
+            accumulatedPoints += score + bonus;
+            totalPointsPossible += max;
+        }else table.rows[i].cells[4].innerText = "";
         table.rows[i].cells[4].classList.remove("clear");
-        table.rows[i].cells[4].innerText=total.toFixed(1) + "%";
 
-        accumulatedPoints += score + bonus;
-        totalPointsPossible += max;
     }
 
-    // Updates Total Points Accumulated percentage
+    // Updates Assignment Type Percentage Score
     let assesmentTypeTotal = accumulatedPoints/totalPointsPossible*100;
-    table.rows[0].cells[2].innerText = assesmentTypeTotal.toFixed(1) + "%"
+    if(typeof assesmentTypeTotal == "number") table.rows[0].cells[2].innerText = assesmentTypeTotal.toFixed(1) + "%";
+    else table.rows[0].cells[2].innerText = "";
+    
+    const aT_gradeWeight = Number(table.rows[0].cells[1].innerText.slice(0,-1))/100;
+
+    return assesmentTypeTotal*aT_gradeWeight;
 }
 
 // Enables and disables Edit Modes 
@@ -64,19 +71,18 @@ function updateTable(tableID, buttonID){
         // Turns "Total" cell into delete table button
         const deleteTable = document.createElement("button");
         deleteTable.classList.add("delete");
-        deleteTable.onclick = () => {t.remove(); b.remove()}
+        deleteTable.onclick = () => {t.remove(); b.remove();}
         deleteTable.innerText = "🗑";
         
         t.rows[1].cells[4].classList.add("clear");
         t.rows[1].cells[4].innerText = "";
         t.rows[1].cells[4].appendChild(deleteTable);
 
-
         // Adds "Add new row" button
         // Creates the button
         const newRowButton = document.createElement("button");
-        newRowButton.classList.add("newRow")
-        newRowButton.innerText = "+ Add New Row"
+        newRowButton.classList.add("newRow");
+        newRowButton.innerText = "+ Add New Row";
         newRowButton.onclick = () => createTableRow(t);
 
         const newRow = t.insertRow(-1);  // Creates a new row at the end of the table
@@ -86,7 +92,7 @@ function updateTable(tableID, buttonID){
 
         cell1.appendChild(newRowButton); // Adds the button into the table
         
-        enableInputTableData(t.rows);
+        enableInputTableData(t.rows, 2); 
     } else if(b.innerText == "Save Changes"){ // Disables Edit Mode
         b.innerText = "Edit Table";
 
@@ -99,68 +105,73 @@ function updateTable(tableID, buttonID){
         t.rows[0].cells[1].innerText = cw_weight.value + "%";
 
         // Updates "Title", "Score", and "Max"
-        let rows = t.rows;
-        for(let r = 2; r<rows.length; r++){
-            let columns = rows[r].cells;
+        for(let r = 2; r<t.rows.length; r++){
+            let columns = t.rows[r].cells;
             for(let c = 0; c<columns.length-1;c++){
-                cw_c = columns[c].querySelector("input");
+                let cw_c = columns[c].querySelector("input");
 
                 if(c!=0){// Validates user's number input
-                    if(cw_c.value < cw_c.min) cw_c.value = cw_c.min;
+                    if(cw_c.value < cw_c.min) cw_c.value = null; // Leaves cell empty if input is invalid
                 }
                 
-                columns[c].innerText =  cw_c.value;
+                columns[c].innerText = cw_c.value;
             }
         } 
-        // Resets "Title" cell
+        // Resets "Total" cell
         t.rows[1].cells[4].classList.remove("clear");
         t.rows[1].cells[4].innerText = "Total"
 
-        // Removes the "Add New Row Button"
-        t.deleteRow(-1);
-        getAssesmentTypeGrade(tableID);
+        t.deleteRow(-1); // Removes the "Add New Row Button"
+
+        // Updates Assignment Type percentage grade
+        getAssesmentTypeGrade(t);
+
+        // Updates Course grade
+        const course = t.parentElement;
+        const elements = course.querySelector("ul").children;
+        getCourseGrade(course, elements[1].querySelector("h5"), elements[3].querySelector("h6"));
     }
 
 }
 
 // Clears user data cells and adds input boxes
-function enableInputTableData(rows){
-    for(let r = 2; r<rows.length-1; r++){
+function enableInputTableData(rows, rowIndexStart){
+    for(let r = rowIndexStart; r<rows.length-1; r++){
             let columns = rows[r].cells;
             for(let c = 0; c<(columns.length);c++){
-                const inputBox = columns[c].querySelector('input'); // Searches for input boc
-                if(inputBox !==null) break;// Jumps rows if they already have input boxes
-
-                if(c==4){ // Adds delete row button
+                if(c==4){ // Replaces the "Total" column number with Delete Row button
                     const deleteRowButton = document.createElement("button");
-                    // deleteRowButton.appendChild(img)
                     deleteRowButton.classList.add("delete");
-                    deleteRowButton.innerText = "×"
+                    deleteRowButton.innerText = "×";
 
                     const row = rows[r];
                     columns[c].classList.add("clear");
-                    deleteRowButton.onclick = () => row.remove(); // CHECK
+                    deleteRowButton.onclick = () => row.remove();
                     
                     columns[c].innerText = ""; // Clears cell's text
                     columns[c].appendChild(deleteRowButton);
                 }else{
                     const cw_c = document.createElement("input");
                     if (c==0){ // Creates text input box for "Title" column
-                        cw_c.classList.add("tDTitle")
+                        cw_c.classList.add("tDTitle");
                         cw_c.type = "text";
                         cw_c.value = columns[c].innerText;
                         cw_c.placeholder = columns[c].innerText;
                     }else{ // Creates number input box for "Score", "Max", and "Bonus" columns
-                        cw_c.classList.add("tData")
+                        cw_c.classList.add("tData");
                         cw_c.type = "number";
-                        cw_c.value = Number(columns[c].innerText);
-                        cw_c.placeholder = Number(columns[c].innerText);
                         cw_c.min = 0;
+
+                        const currentVal = columns[c].innerText;
+                        if(currentVal == "" || currentVal == undefined || currentVal == null) cw_c.value = -1; // Flags empty cells
+                        else{
+                            cw_c.value = Number(currentVal);
+                            cw_c.placeholder = Number(currentVal);
+                        }
                     }
                     columns[c].innerText = ""; // Clears cell's text
                     columns[c].appendChild(cw_c); // Puts input box inside cell
-                }
-                
+                } 
             }
         }
 }
@@ -177,7 +188,7 @@ function createTableRow(table){
     newRow.insertCell(3);
     newRow.insertCell(4);
 
-    enableInputTableData(rows); // Ensures last row is editable
+    enableInputTableData(rows, rows.length-2); // Ensures last row is editable
 }
 
 // Creates a Course Table with its corresponding Edit button
@@ -256,15 +267,17 @@ function createAssignmentType(courseID){
     updateTable(aT_table.id, editButton.id);
 }
 
-function updateCourse(ulID){
-    const ul = document.getElementById(ulID);
+// Enables and disables course edit mode
+function updateCourse(courseID){
+    const course = document.getElementById(courseID);
+    const ul = course.querySelector("ul");
     const elements = ul.children;
 
     const button = elements[4].querySelector("button");
 
     if(button.innerText.includes("Edit")){
         button.innerText = "Save";
-
+        
         // Creates and places Course name input box
         const courseName = document.createElement("input");
         courseName.classList.add("assignmentType");
@@ -318,4 +331,24 @@ function updateCourse(ulID){
         category.remove();
         elements[2].appendChild(h5);
     }
+}
+
+// Calculates total course grade
+function getCourseGrade(course, grade_percentage, grade_letter){
+    const assignments = course.querySelectorAll("table");
+
+    let grade = 0;
+
+    for(let i = 0; i < assignments.length; i++){
+        const points = getAssesmentTypeGrade(assignments[i]);
+        if(typeof points == "number") grade+= points;
+    }
+
+    grade_percentage.innerText = grade.toFixed(0) + "%";
+
+    if(grade>=90) grade_letter.innerText = "A";
+    else if(grade>=80) grade_letter.innerText = "B";
+    else if(grade>=70) grade_letter.innerText = "C";
+    else if(grade>=60) grade_letter.innerText = "D";
+    else grade_letter.innerText = "F";
 }
