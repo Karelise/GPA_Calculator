@@ -23,27 +23,25 @@ function getAssesmentTypeGrade(table){
             accumulatedPoints += score + bonus;
             totalPointsPossible += max;
         }else table.rows[i].cells[4].innerText = "";
-        table.rows[i].cells[4].classList.remove("clear");
 
+        table.rows[i].cells[4].classList.remove("clear");
     }
 
     // Updates Assignment Type Percentage Score
-    let assesmentTypeTotal = accumulatedPoints/totalPointsPossible*100;
+    let assesmentTypeTotal = (accumulatedPoints/totalPointsPossible)*100;
     if(typeof assesmentTypeTotal == "number") table.rows[0].cells[2].innerText = assesmentTypeTotal.toFixed(1) + "%";
     else table.rows[0].cells[2].innerText = "";
     
     const aT_gradeWeight = Number(table.rows[0].cells[1].innerText.slice(0,-1))/100;
 
-    return assesmentTypeTotal*aT_gradeWeight;
+    return [assesmentTypeTotal,aT_gradeWeight]
 }
 
 // Enables and disables Edit Modes 
-function updateTable(tableID, buttonID){
+function updateTable(tableID, mode){
     let t = document.getElementById(tableID);
-    let b = document.getElementById(buttonID);
 
-    if (b.innerText == "Edit Table"){ // Enters Edit Table Mode
-        b.innerText = "Save Changes";
+    if (mode == "edit"){ // Enters Edit Table Mode
 
         // Turns Assignment Type text into an input box
         // Creates a text input box
@@ -71,7 +69,7 @@ function updateTable(tableID, buttonID){
         // Turns "Total" cell into delete table button
         const deleteTable = document.createElement("button");
         deleteTable.classList.add("delete");
-        deleteTable.onclick = () => {t.remove(); b.remove();}
+        deleteTable.onclick = () => {t.remove();}
         deleteTable.innerText = "🗑";
         
         t.rows[1].cells[4].classList.add("clear");
@@ -93,8 +91,7 @@ function updateTable(tableID, buttonID){
         cell1.appendChild(newRowButton); // Adds the button into the table
         
         enableInputTableData(t.rows, 2); 
-    } else if(b.innerText == "Save Changes"){ // Disables Edit Mode
-        b.innerText = "Edit Table";
+    } else if(mode == "save"){ // Disables Edit Mode
 
         // Updates "Assigment Type"
         cw_name = t.rows[0].cells[0].querySelector("input");
@@ -122,14 +119,6 @@ function updateTable(tableID, buttonID){
         t.rows[1].cells[4].innerText = "Total"
 
         t.deleteRow(-1); // Removes the "Add New Row Button"
-
-        // Updates Assignment Type percentage grade
-        getAssesmentTypeGrade(t);
-
-        // Updates Course grade
-        const course = t.parentElement;
-        const elements = course.querySelector("ul").children;
-        getCourseGrade(course, elements[1].querySelector("h5"), elements[3].querySelector("h6"));
     }
 
 }
@@ -179,19 +168,15 @@ function enableInputTableData(rows, rowIndexStart){
 // Adds a new row at the end of all user data rows
 function createTableRow(table){
     let rows = table.rows;
-    const newRow = table.insertRow(rows.length-1); // Adds new rows
+    const newRow = table.insertRow(rows.length-1); // Inserts a new row at the bottom
 
     // Adds 5 cells to the new row
-    newRow.insertCell(0);
-    newRow.insertCell(1);
-    newRow.insertCell(2);
-    newRow.insertCell(3);
-    newRow.insertCell(4);
+    for(let r = 0; r<5; r++) newRow.insertCell(r);
 
     enableInputTableData(rows, rows.length-2); // Ensures last row is editable
 }
 
-// Creates a Course Table with its corresponding Edit button
+// Creates an Assigment Type Table
 function createAssignmentType(courseID){
     const course = document.getElementById(courseID);
 
@@ -231,40 +216,17 @@ function createAssignmentType(courseID){
     h1.appendChild(a_percentage);
 
     // Creates & adds h2 cells
-    const a_title = document.createElement("th");
-    a_title.innerText = "Title";
+    const h2_element_txts = ["Title", "Score", "Max","Bonus","Total"]
 
-    const a_score = document.createElement("th");
-    a_score.innerText = "Score";
-    
-    const a_max = document.createElement("th");
-    a_max.innerText = "Max";
-
-    const a_bonus = document.createElement("th");
-    a_bonus.innerText = "Bonus";
-
-    const a_total = document.createElement("th");
-    a_total.innerText = "Total";
-
-    h2.appendChild(a_title);
-    h2.appendChild(a_score);
-    h2.appendChild(a_max);
-    h2.appendChild(a_bonus);
-    h2.appendChild(a_total);
-
-    // Creates edit/save button
-    const editButton = document.createElement("button");
-    editButton.classList.add("edit");
-    editButton.id = aT_table.id + "_editButton";
-    editButton.onclick = ()=> updateTable(aT_table.id,editButton.id);
-    editButton.innerText = "Edit Table";
+    for(let eNum = 0; eNum < h2_element_txts.length; eNum++){
+        const h2_element = document.createElement("th");
+        h2_element.innerText = h2_element_txts[eNum];
+        h2.appendChild(h2_element);
+    }
 
     // Adds table to section
     course.insertBefore(aT_table, course.lastElementChild);
-    course.insertBefore(editButton, course.lastElementChild)
-    
-    // By default, opens edit mode when an assigment type is created
-    updateTable(aT_table.id, editButton.id);
+    updateTable(aT_table.id, "edit")
 }
 
 // Enables and disables course edit mode
@@ -277,13 +239,13 @@ function updateCourse(courseID){
 
     if(button.innerText.includes("Edit")){
         button.innerText = "Save";
-        
+
         // Creates and places Course name input box
         const courseName = document.createElement("input");
         courseName.classList.add("assignmentType");
         courseName.type = "text";
         courseName.value = elements[0].querySelector("h4").innerText;
-        courseName.placeholder = elements[0].querySelector("h4").innerText;
+        courseName.placeholder = courseName.value;
 
         elements[0].querySelector("h4").innerText = ""
         elements[0].appendChild(courseName);
@@ -315,8 +277,24 @@ function updateCourse(courseID){
         elements[2].querySelector("h5").remove();
         elements[2].appendChild(category);
 
+        // Enters edit mode for all the present assignment type tables
+        let courseTables = course.querySelectorAll("table");
+        for(let a = 0; a < courseTables.length; a++){
+            updateTable(courseTables[a].id, "edit")            
+        }
+
+        // Creates the add new table button
+        let newAssigment_button = document.createElement("button");
+        newAssigment_button.onclick = () => {createAssignmentType(courseID);}
+        newAssigment_button.innerText = "+ Add Assignment Type"
+
+        course.appendChild(newAssigment_button)
+
     }else if(button.innerText.includes("Save")){
         button.innerText = "✎ Edit";
+
+        // Removes the new assigment type button
+        course.lastElementChild.remove()
 
         // Updates Course name
         elements[0].querySelector("h4").innerText = elements[0].querySelector("input").value;
@@ -330,25 +308,48 @@ function updateCourse(courseID){
         h5.innerText = selectedOption.innerText;
         category.remove();
         elements[2].appendChild(h5);
+
+        // Updates assignment tables
+        let assignments = course.querySelectorAll("table");
+        let grades_weights = [];
+        for(let b = 0; b < assignments.length; b++){
+            updateTable(assignments[b].id, "save")
+            grades_weights.push(getAssesmentTypeGrade(assignments[b]))
+        }
+
+        
+        // Updates Percentage and Letter grades 
+        let grades = getCourseGrades(grades_weights);
+        
+        elements[1].querySelector("h5").innerText = grades[0].toFixed(1) + "%";
+        elements[3].querySelector("h6").innerText = grades[1];
     }
 }
 
-// Calculates total course grade
-function getCourseGrade(course, grade_percentage, grade_letter){
-    const assignments = course.querySelectorAll("table");
+// Calculates course percentage and assignings grade letter
+function getCourseGrades(g_w){
+    // Validades grades available and calculates max points possible
+    let maxPointsPossible = 0;
+    for(let r = 0; r<g_w.length;r++){
+        if(Number.isFinite(g_w[r][0]) && Number.isFinite(g_w[r][1])) maxPointsPossible += g_w[r][1];
+        else{
+            g_w.splice(r,1);
+            r--;
+    }}
 
-    let grade = 0;
-
-    for(let i = 0; i < assignments.length; i++){
-        const points = getAssesmentTypeGrade(assignments[i]);
-        if(typeof points == "number") grade+= points;
+    // Calculates the current grade in percent
+    let gradeInPercent = 0
+    for(let r = 0; r<g_w.length;r++){
+        gradeInPercent+= (g_w[r][0]*(g_w[r][1]/maxPointsPossible))
     }
 
-    grade_percentage.innerText = grade.toFixed(0) + "%";
+    // Assigns the grade letter
+    let gradeInLetter = ""
+    if(gradeInPercent>=90) gradeInLetter = "A";
+    else if(gradeInPercent>=80) gradeInLetter = "B";
+    else if(gradeInPercent>=70) gradeInLetter = "C";
+    else if(gradeInPercent>=60) gradeInLetter = "D";
+    else if(gradeInPercent<=50) gradeInLetter = "F";
 
-    if(grade>=90) grade_letter.innerText = "A";
-    else if(grade>=80) grade_letter.innerText = "B";
-    else if(grade>=70) grade_letter.innerText = "C";
-    else if(grade>=60) grade_letter.innerText = "D";
-    else grade_letter.innerText = "F";
+    return [gradeInPercent, gradeInLetter];
 }
