@@ -234,8 +234,7 @@ function updateCourse(courseID){
     const course = document.getElementById(courseID);
     const ul = course.querySelector("ul");
     const elements = ul.children;
-
-    const button = elements[4].querySelector("button");
+    const button = elements[4];
 
     if(button.innerText.includes("Edit")){
         button.innerText = "Save";
@@ -244,10 +243,10 @@ function updateCourse(courseID){
         const courseName = document.createElement("input");
         courseName.classList.add("assignmentType");
         courseName.type = "text";
-        courseName.value = elements[0].querySelector("h4").innerText;
+        courseName.value = elements[0].innerText;
         courseName.placeholder = courseName.value;
-
-        elements[0].querySelector("h4").innerText = ""
+        
+        elements[0].innerText = ""
         elements[0].appendChild(courseName);
 
         // Creates a drop down menu for Categories
@@ -256,7 +255,7 @@ function updateCourse(courseID){
 
         const selectedOption = document.createElement("span");
         selectedOption.innerText = elements[2].innerText;
-
+        
         category.appendChild(selectedOption);
 
         const categoryOptions = document.createElement("div");
@@ -274,7 +273,7 @@ function updateCourse(courseID){
         }    
         
         category.appendChild(categoryOptions);
-        elements[2].querySelector("h5").remove();
+        elements[2].innerText = "";
         elements[2].appendChild(category);
 
         // Enters edit mode for all the present assignment type tables
@@ -292,22 +291,18 @@ function updateCourse(courseID){
 
     }else if(button.innerText.includes("Save")){
         button.innerText = "✎ Edit";
-
+        
         // Removes the new assigment type button
         course.lastElementChild.remove()
 
         // Updates Course name
-        elements[0].querySelector("h4").innerText = elements[0].querySelector("input").value;
-        elements[0].querySelector("input").remove();
+        elements[0].innerText = elements[0].lastElementChild.value;
 
         // Updates Category
-        const h5 = document.createElement("h5");
-        const category = elements[2].querySelector("div");
+        const category = elements[2].lastElementChild;
         const selectedOption = category.querySelector("span");
 
-        h5.innerText = selectedOption.innerText;
-        category.remove();
-        elements[2].appendChild(h5);
+        elements[2].innerText = selectedOption.innerText;
 
         // Updates assignment tables
         let assignments = course.querySelectorAll("table");
@@ -316,13 +311,12 @@ function updateCourse(courseID){
             updateTable(assignments[b].id, "save")
             grades_weights.push(getAssesmentTypeGrade(assignments[b]))
         }
-
         
         // Updates Percentage and Letter grades 
         let grades = getCourseGrades(grades_weights);
         
-        elements[1].querySelector("h5").innerText = grades[0].toFixed(1) + "%";
-        elements[3].querySelector("h6").innerText = grades[1];
+        elements[1].innerText = grades[0].toFixed(1) + "%";
+        elements[3].innerText = grades[1];
     }
 }
 
@@ -344,7 +338,7 @@ function getCourseGrades(g_w){
     }
 
     // Assigns the grade letter
-    let gradeInLetter = ""
+    let gradeInLetter = "---"
     if(gradeInPercent>=90) gradeInLetter = "A";
     else if(gradeInPercent>=80) gradeInLetter = "B";
     else if(gradeInPercent>=70) gradeInLetter = "C";
@@ -352,4 +346,70 @@ function getCourseGrades(g_w){
     else if(gradeInPercent<=50) gradeInLetter = "F";
 
     return [gradeInPercent, gradeInLetter];
+}
+
+// Adds a new course section
+function createCourse(semesterID){
+    let semester = document.getElementById(semesterID);
+
+    // Creates the course section
+    let course = document.createElement("section")
+    course.classList.add("course")
+    // Finds the course's ID number
+    let allCourses = semester.querySelectorAll("section")
+    let courseNum = maxIDLastNum(allCourses)+1;
+    course.id = semester.id+"c"+courseNum;
+
+    // Creates the unordered list that acts as the course's header
+    let ul = document.createElement("ul");
+
+    let courseName = document.createElement("h4");
+    courseName.innerText = "Course Name";
+
+    let coursePercentage = document.createElement("h5");
+    coursePercentage.innerText = "00.0%"
+
+    let courseCategory = document.createElement("h5");
+    courseCategory.innerText = "Category";
+
+    let courseLetter =document.createElement("h6");
+    courseLetter.innerText = "---";
+
+    let courseEditButton = document.createElement("button");
+    courseEditButton.innerText = "✎ Edit";
+    courseEditButton.onclick = ()  => {updateCourse(course.id)}
+
+    ul.appendChild(courseName);
+    ul.appendChild(coursePercentage);
+    ul.appendChild(courseCategory);
+    ul.appendChild(courseLetter);
+    ul.appendChild(courseEditButton);
+
+    course.appendChild(ul);
+    semester.insertBefore(course, semester.lastElementChild)
+
+    // Enters edit mode by default with an empty table
+    updateCourse(course.id);
+    createAssignmentType(course.id);
+}
+
+// Helper function that finds the max last number in the ids
+function maxIDLastNum(elements){
+    let max = 1; // Default
+
+    for(let i = 0; i < elements.length; i++){
+        const id = elements[i].id; 
+
+        if(typeof id !== "string") continue; // Ensures an id was found
+
+        // Gathers the id's last number
+        let lastNum = "";
+        for(let j=id.length-1; j>0; j--){
+            if(Number.isFinite(Number(id[j]))) lastNum= id[j]+lastNum;
+            else j = -1; // Character was found, last number is complete 
+        }
+
+        if(max < Number(lastNum)) max = Number(lastNum);
+    }
+    return max;
 }

@@ -57,12 +57,14 @@ section.course{
     border-radius: 50px;
     width:fit-content;
     margin:auto; /* Centers section*/
+    margin-bottom: 20px;
 }
 
 /* Section type "course" Elements*/
-.course ul{
+ul{
     list-style-type: none;
-    display: flex;            
+    display: flex;
+    justify-content: center;
 }
 
 .course h4{  /* Assignment Type */
@@ -190,4 +192,31 @@ div.categoryOptions a{
 }
 div.categoryOptions :hover{
     background-color: darkslategrey;
+}
+
+.semester h3{
+    font-size: 35px;
+    margin-right: 100px;
+}
+
+.semester p{
+    font-size: 30px;
+    background-color: lightgreen;
+    border-radius: 50px;
+    padding: 10px;
+    color: white;
+    width: fit-content;
+}
+
+
+section.year{
+    background-color: lightblue;
+    border: 20px solid lightblue;
+    border-radius: 50px;
+    width:fit-content;
+    margin:auto;
+}
+
+h2{
+    font-size: 40px;
 }

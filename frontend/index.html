@@ -11,51 +11,19 @@
     <header>
         <h1>GPA Calculator</h1>
     </header>
-    
-    <h2>Year</h2>
-    <h3>Semester</h3>
-    
-    <section class = "course" id = "c1">
-        <ul id = "ul1">
-            <li><h4>Course Name</h4></li>
-            <li><h5>00.00%</h5></li>
-            <li><h5>Category</h5></li>
-            <li><h6>- L</h6></li>
-            <li><button id = "c1_editButton" onclick = "updateCourse('c1')">✎ Edit</button></li>
-        </ul>
 
-        <table class = "assignment" id = "c1t1">
-        <tr>
-            <th class = "tableTitle" colspan="3">Assignment Type</th>
-            <th class = "tableTitle">00%</th>
-            <th class = "percentage">00.0%</th>
-            
-        </tr>
-        <tr>
-            <th>Title</th>
-            <th>Score</th>
-            <th>Max</th>
-            <th>Bonus</th> 
-            <th>Total</th>
-        </tr>
-
-        <tr>
-            <td>#</td>
-            <td>80</td>
-            <td>100</td>
-            <td>10</td>
-            <td>0</td>
-        </tr>
-        <tr>
-            <td>#</td>
-            <td>25</td>
-            <td>30</td>
-            <td>0</td>
-            <td>0</td>
-        </tr>
-    </table>
+    <section class = "year">    
+    <ul><h2>Year 1</h2></ul>
     
+    <section class = "semester" id = "s1">
+    
+
+    <ul><h3>Semester 1</h3><p>0.00</p></ul>
+    <button onclick = "createCourse('s1')">+ Add Course</button>
     </section>
+    <button>+ Add Semester</button>
+    </section>
+    <button>+ Add Year</button>
 
     <script src = "index.js"></script>
     
