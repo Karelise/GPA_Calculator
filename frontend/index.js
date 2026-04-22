@@ -44,7 +44,6 @@ function updateTable(tableID, mode){
     if (mode == "edit"){ // Enters Edit Table Mode
 
         // Turns Assignment Type text into an input box
-        // Creates a text input box
         const cw_name = document.createElement("input");
         cw_name.classList.add("assignmentType");
         cw_name.type = "text";
@@ -55,7 +54,6 @@ function updateTable(tableID, mode){
         t.rows[0].cells[0].appendChild(cw_name); // Inserts input box into cell
 
         // Turns Weight in Grade into a number input box
-        // Creates a number input box
         const cw_weight = document.createElement("input");
         cw_weight.classList.add("weight");
         cw_weight.type = "number";
@@ -77,7 +75,6 @@ function updateTable(tableID, mode){
         t.rows[1].cells[4].appendChild(deleteTable);
 
         // Adds "Add new row" button
-        // Creates the button
         const newRowButton = document.createElement("button");
         newRowButton.classList.add("newRow");
         newRowButton.innerText = "+ Add New Row";
@@ -183,14 +180,10 @@ function createAssignmentType(courseID){
     const aT_table = document.createElement("table");
     aT_table.classList.add("assignment");
 
-    // Finds the assigment's corresponding number
+    // Finds the assigment table's corresponding number
     const tables = course.querySelectorAll("table"); // Gets a list of all the tables in the given Course
-    const lastTable = tables[tables.length-1]; 
-    
-    let idLastNum = 1; // Default, course has no tables
-    if(lastTable !==undefined && lastTable !== null) idLastNum = Number(lastTable.id.slice(-1))+1;
-
-    aT_table.id = courseID + "a" + idLastNum;
+    const tableNum = maxIDLastNum(tables)+1;
+    aT_table.id = courseID + "a" + tableNum;
 
     // Create's the table's headers
     const tHead = aT_table.createTHead();
@@ -234,9 +227,9 @@ function updateCourse(courseID){
     const course = document.getElementById(courseID);
     const ul = course.querySelector("ul");
     const elements = ul.children;
-    const button = elements[4];
+    const button = elements[5];
 
-    if(button.innerText.includes("Edit")){
+    if(button.innerText.includes("Edit")){ // Enters edit mode
         button.innerText = "Save";
 
         // Creates and places Course name input box
@@ -276,6 +269,28 @@ function updateCourse(courseID){
         elements[2].innerText = "";
         elements[2].appendChild(category);
 
+        // Creates Credit input box
+        const credit = document.createElement("input");
+        credit.classList.add("weight");
+        credit.type = "number";
+        credit.value = elements[1].innerText;
+        credit.placeholder = credit.value;
+        credit.min = 0;
+        credit.max = 24;
+
+        elements[1].innerText = ""
+        elements[1].appendChild(credit);
+
+        // Adds delete course button
+        const deleteCourse = document.createElement("button");
+        deleteCourse.classList.add("delete");
+        deleteCourse.onclick = () => {course.remove()}
+        deleteCourse.innerText="⌦"
+        elements[4].innerText = ""
+        elements[4].appendChild(deleteCourse);
+        elements[4].classList.add("clear");
+
+
         // Enters edit mode for all the present assignment type tables
         let courseTables = course.querySelectorAll("table");
         for(let a = 0; a < courseTables.length; a++){
@@ -304,6 +319,14 @@ function updateCourse(courseID){
 
         elements[2].innerText = selectedOption.innerText;
 
+        // Validates and updates credit
+        if(isFinite(elements[1].lastElementChild.value)){
+            if(Number(elements[1].lastElementChild.value)>elements[1].lastElementChild.min && Number(elements[1].lastElementChild.value)<elements[1].lastElementChild.max){
+                console.log(elements[1].lastElementChild.value)
+                elements[1].innerText = elements[1].lastElementChild.value;
+            }else elements[1].innerText = "---"
+        }
+
         // Updates assignment tables
         let assignments = course.querySelectorAll("table");
         let grades_weights = [];
@@ -315,7 +338,8 @@ function updateCourse(courseID){
         // Updates Percentage and Letter grades 
         let grades = getCourseGrades(grades_weights);
         
-        elements[1].innerText = grades[0].toFixed(1) + "%";
+        elements[4].innerText = grades[0].toFixed(1) + "%";
+        elements[4].classList.remove("clear");
         elements[3].innerText = grades[1];
     }
 }
@@ -366,8 +390,8 @@ function createCourse(semesterID){
     let courseName = document.createElement("h4");
     courseName.innerText = "Course Name";
 
-    let coursePercentage = document.createElement("h5");
-    coursePercentage.innerText = "00.0%"
+    let courseCredit = document.createElement("h5");
+    courseCredit.innerText = "---"
 
     let courseCategory = document.createElement("h5");
     courseCategory.innerText = "Category";
@@ -375,13 +399,17 @@ function createCourse(semesterID){
     let courseLetter =document.createElement("h6");
     courseLetter.innerText = "---";
 
+    let coursePercentage = document.createElement("h6");
+    coursePercentage.innerText = "%";
+
     let courseEditButton = document.createElement("button");
     courseEditButton.innerText = "✎ Edit";
     courseEditButton.onclick = ()  => {updateCourse(course.id)}
 
     ul.appendChild(courseName);
-    ul.appendChild(coursePercentage);
+    ul.appendChild(courseCredit);
     ul.appendChild(courseCategory);
+    ul.appendChild(coursePercentage);
     ul.appendChild(courseLetter);
     ul.appendChild(courseEditButton);
 

@@ -220,3 +220,18 @@ section.year{
 h2{
     font-size: 40px;
 }
+
+button.addCourse{
+    background-color: antiquewhite;
+    border-radius: 50px;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 10px;
+    border-color: antiquewhite;
+    margin-bottom: 10px;
+}
+
+h6.clear{
+    background-color: transparent;
+    border-color: transparent;
+}
