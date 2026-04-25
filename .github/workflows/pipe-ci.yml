@@ -29,5 +29,6 @@ jobs:
         docker build -t ghcr.io/$OWNER/gpa-app:latest . 
         
     - name: Push image 
-      run: | 
-        docker push ghcr.io/${{ github.repository_owner }}/gpa-app:latest
+      run: |
+        OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]') 
+        docker push ghcr.io/$OWNER/gpa-app:latest
