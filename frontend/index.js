@@ -421,6 +421,85 @@ function createCourse(semesterID){
     createAssignmentType(course.id);
 }
 
+function createSemester(yearID){
+    const year = document.getElementById(yearID);
+
+    // Finds the semester's corresponding number
+    const allSemesters = year.querySelectorAll("section.semester");
+    const idNum = maxIDLastNum(allSemesters) + 1;
+    // Creates the semester section with it's id
+    const semester = document.createElement("section");
+    semester.classList.add("semester");
+    semester.id = year.id+idNum;
+
+    // Creates the semester's header section
+    const ul = document.createElement("ul");
+    const h3 = document.createElement("h3");
+    h3.innerText = "Semester " + (allSemesters.length+1);
+    const p = document.createElement("p");
+    p.innerText = "----";
+
+    const editButton = document.createElement("button");
+    editButton.classList.add("addCourse")
+    editButton.innerText = "✎ Edit";
+    editButton.onclick = () => {updateSemester(semester.id)}
+    
+    ul.appendChild(h3);
+    ul.appendChild(p);
+    ul.append(editButton)
+    semester.appendChild(ul);
+
+
+    year.insertBefore(semester, year.lastElementChild);
+    updateSemester(semester.id)
+}
+
+function updateSemester(semesterID){
+    const semester = document.getElementById(semesterID);
+
+    const ul = semester.querySelector("ul");
+    const editButton = ul.querySelector("button");
+
+    if(editButton.innerText.includes("Edit")){// Enters edit mode
+        editButton.innerText = "Save";
+        
+        // Makes an input box for the semester's name
+        const semesterName = document.createElement("input");
+        semesterName.classList.add("assignmentType");
+        semesterName.type = "text";
+        semesterName.value = ul.querySelector("h3").innerText;
+        semesterName.placeholder = semesterName.value;
+
+        ul.querySelector("h3").innerText = "";
+        ul.querySelector("h3").appendChild(semesterName);
+
+        // Adds a remove semester button
+        const removeSemester = document.createElement("button");
+        removeSemester.onclick = () => {semester.remove()}
+        removeSemester.innerText = "🗑";
+        removeSemester.classList.add("delete");
+
+        ul.appendChild(removeSemester);
+
+        // Creates Add Course Button
+        const newCourseButton = document.createElement("button");
+        newCourseButton.classList.add("addCourse");
+        newCourseButton.innerText="+ Add Course";
+        newCourseButton.onclick = () => {createCourse(semester.id)}
+
+        semester.appendChild(newCourseButton);
+
+    }else if(editButton.innerText.includes("Save")){
+        editButton.innerText = "✎ Edit";
+
+        ul.querySelector("h3").innerText = ul.querySelector("h3").lastElementChild.value;
+
+        ul.removeChild(ul.lastElementChild);
+
+        semester.removeChild(semester.lastElementChild);
+    }
+}
+
 // Helper function that finds the max last number in the ids
 function maxIDLastNum(elements){
     let max = 1; // Default
